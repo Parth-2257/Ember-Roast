@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ember & Roast | Where Every Sip Tells A Story</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* =====================
+           RESET & VARIABLES
+           ===================== */
+        :root {
+            --bg-color: #0f0f0f;
+            --primary-gold: #f59e0b;
+            --text-white: #ffffff;
+            --text-gray: #a1a1aa;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+
+            --font-heading: 'Bebas Neue', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: var(--font-heading);
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =====================
+           NAVBAR
+           ===================== */
+        .navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 1200px;
+            background: rgba(15, 15, 15, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            background: rgba(15, 15, 15, 0.85);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
+        .logo {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            color: var(--text-white);
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-gray);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-gold);
+        }
+
+        .nav-actions .btn-outline {
+            border: 1px solid var(--text-white);
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-actions .btn-outline:hover {
+            background-color: var(--text-white);
+            color: var(--bg-color);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background-color: var(--text-white);
+            transition: var(--transition);
+        }
+
+        /* =====================
+           HERO SECTION
+           ===================== */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: -5%;
+            /* extend slightly to hide edges during rotation */
+            display: flex;
+            z-index: 1;
+        }
+
+        .hero-img {
+            flex: 1;
+            position: relative;
+            height: 100%;
+            transition: transform 0.5s ease-out;
+        }
+
+        .hero-img.left {
+            transform: rotate(-3deg) scale(1.1);
+            transform-origin: center right;
+        }
+
+        .hero-img.right {
+            transform: rotate(3deg) scale(1.1);
+            transform-origin: center left;
+        }
+
+        .hero-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(15, 15, 15, 1) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4rem 5rem;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 700px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero h1 {
+            font-size: clamp(4rem, 8vw, 7rem);
+            margin-bottom: 0.5rem;
+            line-height: 1;
+            color: var(--text-white);
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #e4e4e7;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font-body);
+            border: none;
+        }
+
+        .btn-gold {
+            background-color: var(--primary-gold);
+            color: #000;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-gold:hover {
+            background-color: #fbbf24;
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+        }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-white);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            border-color: var(--text-white);
+        }
+
+        /* =====================
+           STATS BAR
+           ===================== */
+        .stats-section {
+            padding: 3rem 5%;
+            background-color: var(--bg-color);
+            position: relative;
+            z-index: 5;
+            margin-top: -2rem;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-gold);
+            background: rgba(245, 158, 11, 0.03);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--text-white);
+            letter-spacing: 1px;
+        }
+
+        /* =====================
+           MENU SECTION
+           ===================== */
+        .menu-section {
+            padding: 8rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 4rem;
+            color: var(--text-white);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--primary-gold);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-gold);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .menu-img {
+            height: 250px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .menu-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .menu-card:hover .menu-img img {
+            transform: scale(1.1);
+        }
+
+        .menu-content {
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-content h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-content h3 span {
+            color: var(--primary-gold);
+            font-family: var(--font-body);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .menu-content p {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .menu-order {
+            text-align: right;
+        }
+
+        .menu-order a {
+            color: var(--text-white);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--primary-gold);
+            padding-bottom: 3px;
+            transition: var(--transition);
+        }
+
+        .menu-order a:hover {
+            color: var(--primary-gold);
+        }
+
+        /* =====================
+           ABOUT SECTION
+           ===================== */
+        .about-section {
+            padding: 8rem 5%;
+            background-color: rgba(25, 25, 25, 0.3);
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .about-img {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .about-img img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .about-content h4 {
+            color: var(--primary-gold);
+            font-family: var(--font-body);
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .about-content h2 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .about-content p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        /* =====================
+           TESTIMONIALS SECTION
+           ===================== */
+        .testimonials-section {
+            padding: 8rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+        }
+
+        .review-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .review-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary-gold);
+        }
+
+        .review-stars {
+            color: var(--primary-gold);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .review-text {
+            font-style: italic;
+            color: #d4d4d8;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .reviewer-name {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--text-white);
+            letter-spacing: 1px;
+        }
+
+        .reviewer-title {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* =====================
+           CONTACT SECTION
+           ===================== */
+        .contact-section {
+            padding: 8rem 5%;
+            background-color: rgba(25, 25, 25, 0.3);
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 4rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info h2 {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-info p {
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--primary-gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.2rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-white);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        textarea.form-input {
+            height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: var(--primary-gold);
+            color: #000;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            background: #fbbf24;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        /* =====================
+           FOOTER
+           ===================== */
+        footer {
+            background: #000000;
+            padding: 4rem 5% 2rem;
+            text-align: center;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .footer-logo {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            color: var(--text-white);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .footer-socials {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .footer-socials a {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .footer-socials a:hover {
+            background: var(--primary-gold);
+            color: #000;
+            transform: translateY(-3px);
+            border-color: var(--primary-gold);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* =====================
+           RESPONSIVE
+           ===================== */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .contact-container {
+                grid-template-columns: 1fr;
+                padding: 3rem;
+            }
+
+            .hero-img.left,
+            .hero-img.right {
+                transform: rotate(0) scale(1);
+            }
+
+            /* remove rotation on smaller screens for cleaner look */
+        }
+
+        @media (max-width: 768px) {
+
+            .nav-links,
+            .nav-actions {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .navbar {
+                width: 95%;
+                padding: 1rem;
+                top: 10px;
+            }
+
+            .hero-bg {
+                flex-direction: column;
+            }
+
+            .hero-content {
+                padding: 3rem 2rem;
+                margin: 0 1rem;
+            }
+
+            .hero h1 {
+                font-size: 4rem;
+            }
+
+            .about-container {
+                grid-template-columns: 1fr;
+            }
+
+            .about-img {
+                order: -1;
+            }
+
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-container {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="logo">EMBER & ROAST</a>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="#" class="btn-outline">Order Online</a>
+        </div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <!-- Split Background Images -->
+        <div class="hero-bg">
+            <div class="hero-img left">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800" alt="Latte Art Pour">
+                <div class="hero-overlay"></div>
+            </div>
+            <div class="hero-img right">
+                <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800" alt="Coffee and Pastry">
+                <div class="hero-overlay"></div>
+            </div>
+        </div>
+
+        <!-- Center Glass Card -->
+        <div class="hero-content fade-in">
+            <h1>EMBER & ROAST</h1>
+            <p>Where Every Sip Tells A Story</p>
+            <div class="hero-btns">
+                <a href="#menu" class="btn btn-gold">Explore Menu</a>
+                <a href="#contact" class="btn btn-glass">Reserve Table</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item fade-in">
+                <div class="stat-icon">🌿</div>
+                <div class="stat-label">Fresh & Organic</div>
+            </div>
+            <div class="stat-item fade-in" style="transition-delay: 0.1s;">
+                <div class="stat-icon">☕</div>
+                <div class="stat-label">Premium Beans</div>
+            </div>
+            <div class="stat-item fade-in" style="transition-delay: 0.2s;">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-label">4.9 Rating</div>
+            </div>
+            <div class="stat-item fade-in" style="transition-delay: 0.3s;">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-label">Award Winning</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MENU SECTION -->
+    <section class="menu-section" id="menu">
+        <div class="section-header fade-in">
+            <p>OUR SIGNATURE</p>
+            <h2>The Menu</h2>
+        </div>
+        <div class="menu-grid">
+            <!-- Item 1 -->
+            <div class="menu-card fade-in">
+                <div class="menu-img">
+                    <img src="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=500" alt="Espresso">
+                </div>
+                <div class="menu-content">
+                    <h3>Classic Espresso <span>$3.50</span></h3>
+                    <p>Rich, dark, and intensely flavorful. The perfect quick pickup pulled perfectly every time.</p>
+                    <div class="menu-order"><a href="#">Add to Order</a></div>
+                </div>
+            </div>
+            <!-- Item 2 -->
+            <div class="menu-card fade-in" style="transition-delay: 0.1s;">
+                <div class="menu-img">
+                    <img src="https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?w=500" alt="Latte">
+                </div>
+                <div class="menu-content">
+                    <h3>Velvet Latte <span>$4.50</span></h3>
+                    <p>Smooth espresso deeply enveloped in perfectly micro-foamed textured milk.</p>
+                    <div class="menu-order"><a href="#">Add to Order</a></div>
+                </div>
+            </div>
+            <!-- Item 3 -->
+            <div class="menu-card fade-in" style="transition-delay: 0.2s;">
+                <div class="menu-img">
+                    <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=500" alt="Mocha">
+                </div>
+                <div class="menu-content">
+                    <h3>Dark Mocha <span>$5.00</span></h3>
+                    <p>Premium dark chocolate gently melted into our signature espresso blend.</p>
+                    <div class="menu-order"><a href="#">Add to Order</a></div>
+                </div>
+            </div>
+            <!-- Item 4 -->
+            <div class="menu-card fade-in">
+                <div class="menu-img">
+                    <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=500" alt="Cold Brew">
+                </div>
+                <div class="menu-content">
+                    <h3>Nitro Cold Brew <span>$4.75</span></h3>
+                    <p>Slow steeped for 24 hours and infused with nitrogen for a naturally sweet, creamy finish.</p>
+                    <div class="menu-order"><a href="#">Add to Order</a></div>
+                </div>
+            </div>
+            <!-- Item 5 -->
+            <div class="menu-card fade-in" style="transition-delay: 0.1s;">
+                <div class="menu-img">
+                    <img src="https://images.unsplash.com/photo-1515823662972-da6a2b4d3002?w=500" alt="Matcha">
+                </div>
+                <div class="menu-content">
+                    <h3>Matcha Latte <span>$5.25</span></h3>
+                    <p>Ceremonial grade green tea whisked with almond milk and a touch of honey.</p>
+                    <div class="menu-order"><a href="#">Add to Order</a></div>
+                </div>
+            </div>
+            <!-- Item 6 -->
+            <div class="menu-card fade-in" style="transition-delay: 0.2s;">
+                <div class="menu-img">
+                    <img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=500" alt="Pastry">
+                </div>
+                <div class="menu-content">
+                    <h3>Artisan Croissant <span>$4.00</span></h3>
+                    <p>Flaky, buttery perfection baked fresh in-house every morning.</p>
+                    <div class="menu-order"><a href="#">Add to Order</a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about-section" id="about">
+        <div class="about-container">
+            <div class="about-img fade-in">
+                <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800" alt="Inside the Cafe">
+            </div>
+            <div class="about-content fade-in" style="transition-delay: 0.3s;">
+                <h4>OUR STORY</h4>
+                <h2>A Passion For The Perfect Brew</h2>
+                <p>Born from a deep love for artisan coffee, Ember & Roast was designed to be your sanctuary in the
+                    city. Since 2018, we have been obsessed with sourcing the finest organic beans from sustainable
+                    farms across the globe.</p>
+                <p>We believe every cup tells a story — of the soil it grew in, the hands that harvested it, and the
+                    barista who precisely crafted it for you. Come for the coffee, stay for the warmth.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials-section">
+        <div class="section-header fade-in">
+            <p>REVIEWS</p>
+            <h2>What People Say</h2>
+        </div>
+        <div class="testimonials-grid">
+            <div class="review-card fade-in">
+                <div class="review-stars">★★★★★</div>
+                <p class="review-text">"An absolute gem. The atmosphere is gorgeous, and their Nitro Cold Brew is the
+                    best I've ever had in the city."</p>
+                <h4 class="reviewer-name">Sarah Jenkins</h4>
+                <p class="reviewer-title">Local Artist</p>
+            </div>
+            <div class="review-card fade-in" style="transition-delay: 0.1s;">
+                <div class="review-stars">★★★★★</div>
+                <p class="review-text">"I come here every morning to write. The background music, the smell of fresh
+                    croissants, and the Velvet Latte make my day."</p>
+                <h4 class="reviewer-name">David Chen</h4>
+                <p class="reviewer-title">Author</p>
+            </div>
+            <div class="review-card fade-in" style="transition-delay: 0.2s;">
+                <div class="review-stars">★★★★★</div>
+                <p class="review-text">"Finally a place that takes espresso seriously. Perfectly balanced acidity and a
+                    gorgeous crema on top every single time."</p>
+                <h4 class="reviewer-name">Marcus Rome</h4>
+                <p class="reviewer-title">Coffee Enthusiast</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section" id="contact">
+        <div class="contact-container fade-in">
+            <div class="contact-info">
+                <h2>Get In Touch</h2>
+                <p>We'd love to hear from you. Reserve a table or ask about our beans.</p>
+                <div class="contact-details">
+                    <div class="detail-item">
+                        <div class="detail-icon">📍</div>
+                        <p>128 Artisan Way, Roastville, CA</p>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">📞</div>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">✉️</div>
+                        <p>hello@emberandroast.com</p>
+                    </div>
+                </div>
+            </div>
+            <form class="contact-form" onsubmit="event.preventDefault();">
+                <input type="text" class="form-input" placeholder="Your Name" required>
+                <input type="email" class="form-input" placeholder="Your Email" required>
+                <textarea class="form-input" placeholder="Your Message" required></textarea>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">EMBER & ROAST</div>
+        <div class="footer-socials">
+            <a href="#">IG</a>
+            <a href="#">FB</a>
+            <a href="#">TW</a>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Ember & Roast. Built with passion.</p>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Apply observer & trigger load animations
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+            // Force first sections
+            setTimeout(() => {
+                document.querySelector('.hero-content').classList.add('visible');
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>
